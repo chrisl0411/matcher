@@ -25,6 +25,8 @@ public class UserController {
     public User getUserById(@PathVariable Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
+
+
     }
 
     @PostMapping("/users")
