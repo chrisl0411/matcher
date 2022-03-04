@@ -18,10 +18,11 @@ public class User {
     private String phone;
     private String subscriptionsHave;
     private String subscriptionsWant;
+    private String country;
 
     User() {}
 
-    public User(String firstName, String lastName, String gender, String email, String phone, String subscriptionsHave, String subscriptionsWanted) {
+    public User(String firstName, String lastName, String gender, String email, String phone, String subscriptionsHave, String subscriptionsWanted, String country) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.gender = gender;
@@ -29,10 +30,15 @@ public class User {
         this.phone = phone;
         this.subscriptionsHave = subscriptionsHave;
         this.subscriptionsWant = subscriptionsWanted;
+        this.country = country;
     }
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getFirstName() {
@@ -91,17 +97,25 @@ public class User {
         this.subscriptionsWant = subscriptionsWant;
     }
 
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return id.equals(user.id) && firstName.equals(user.firstName) && lastName.equals(user.lastName) && Objects.equals(gender, user.gender) && Objects.equals(email, user.email) && Objects.equals(phone, user.phone) && Objects.equals(subscriptionsHave, user.subscriptionsHave) && Objects.equals(subscriptionsWant, user.subscriptionsWant);
+        return id.equals(user.id) && firstName.equals(user.firstName) && lastName.equals(user.lastName) && Objects.equals(gender, user.gender) && Objects.equals(email, user.email) && Objects.equals(phone, user.phone) && Objects.equals(subscriptionsHave, user.subscriptionsHave) && Objects.equals(subscriptionsWant, user.subscriptionsWant) && Objects.equals(country, user.country);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, lastName, gender, email, phone, subscriptionsHave, subscriptionsWant);
+        return Objects.hash(id, firstName, lastName, gender, email, phone, subscriptionsHave, subscriptionsWant, country);
     }
 
     @Override
@@ -115,6 +129,7 @@ public class User {
                 ", phone='" + phone + '\'' +
                 ", subscriptionsHave=" + subscriptionsHave +
                 ", subscriptionsWanted=" + subscriptionsWant +
+                ", country=" + country +
                 '}';
     }
 }
