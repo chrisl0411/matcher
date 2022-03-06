@@ -1,31 +1,44 @@
 package com.grizzly.subscription.matcher.controller;
 
+import com.grizzly.subscription.matcher.assembler.UserModelAssembler;
 import com.grizzly.subscription.matcher.domain.User;
 import com.grizzly.subscription.matcher.exceptions.UserNotFoundException;
 import com.grizzly.subscription.matcher.repository.UserRepository;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 public class UserController {
 
     private final UserRepository userRepository;
+    private final UserModelAssembler userModelAssembler;
 
-    public UserController(UserRepository userRepository) {
+    public UserController(UserRepository userRepository, UserModelAssembler userModelAssembler) {
         this.userRepository = userRepository;
+        this.userModelAssembler = userModelAssembler;
     }
 
     @GetMapping("/users")
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public CollectionModel<EntityModel<User>> getAllUsers() {
+        List<EntityModel<User>> users = userRepository.findAll().stream()
+                .map(userModelAssembler::toModel)
+                .collect(Collectors.toList());
+        return CollectionModel.of(users,
+                linkTo(methodOn(UserController.class).getAllUsers()).withSelfRel());
     }
 
     @GetMapping("/users/{id}")
-    public User getUserById(@PathVariable Long id) {
-        return userRepository.findById(id)
+    public EntityModel<User> getUserById(@PathVariable Long id) {
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
-
+        return userModelAssembler.toModel(user);
 
     }
 
