@@ -1,23 +1,30 @@
 package com.grizzly.subscription.matcher.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import java.util.List;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
+@Table(name = "users")
 public class User {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
     private String firstName;
+    @Column(nullable = false)
     private String lastName;
+    @Column(nullable = false)
     private String gender;
+    @Column(nullable = false)
     private String email;
+    @Column(nullable = false)
     private String phone;
+    @Column(nullable = false)
     private String subscriptionsHave;
+    @Column(nullable = false)
     private String subscriptionsWant;
+    @Column(nullable = false)
     private String country;
 
     User() {}
