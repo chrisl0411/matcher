@@ -17,27 +17,39 @@ public class User {
     @Column(nullable = false)
     private String gender;
     @Column(nullable = false)
+    private Integer age;
+    @Column(nullable = false)
+    private String city;
+    @Column(nullable = false)
+    private String state;
+    @Column(nullable = false)
+    private String occupation;
+    @Column(nullable = false)
     private String email;
     @Column(nullable = false)
     private String phone;
     @Column(nullable = false)
-    private String subscriptionsHave;
+    private Integer verifiedCount = 0;
     @Column(nullable = false)
-    private String subscriptionsWant;
+    private String topic;
     @Column(nullable = false)
-    private String country;
+    private String subTopic;
 
     User() {}
 
-    public User(String firstName, String lastName, String gender, String email, String phone, String subscriptionsHave, String subscriptionsWanted, String country) {
+    public User(String firstName, String lastName, String gender, Integer age, String city, String state, String occupation, String email, String phone, Integer verifiedCount, String topic, String subTopic) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.gender = gender;
+        this.age = age;
+        this.city = city;
+        this.state = state;
+        this.occupation = occupation;
         this.email = email;
         this.phone = phone;
-        this.subscriptionsHave = subscriptionsHave;
-        this.subscriptionsWant = subscriptionsWanted;
-        this.country = country;
+        this.verifiedCount = verifiedCount;
+        this.topic = topic;
+        this.subTopic = subTopic;
     }
 
     public Long getId() {
@@ -72,6 +84,38 @@ public class User {
         this.gender = gender;
     }
 
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getOccupation() {
+        return occupation;
+    }
+
+    public void setOccupation(String occupation) {
+        this.occupation = occupation;
+    }
+
     public String getEmail() {
         return email;
     }
@@ -88,28 +132,28 @@ public class User {
         this.phone = phone;
     }
 
-    public String getSubscriptionsHave() {
-        return subscriptionsHave;
+    public Integer getVerifiedCount() {
+        return verifiedCount;
     }
 
-    public void setSubscriptionsHave(String subscriptionsHave) {
-        this.subscriptionsHave = subscriptionsHave;
+    public void setVerifiedCount(Integer verifiedCount) {
+        this.verifiedCount = verifiedCount;
     }
 
-    public String getSubscriptionsWant() {
-        return subscriptionsWant;
+    public String getTopic() {
+        return topic;
     }
 
-    public void setSubscriptionsWant(String subscriptionsWant) {
-        this.subscriptionsWant = subscriptionsWant;
+    public void setTopic(String topic) {
+        this.topic = topic;
     }
 
-    public String getCountry() {
-        return country;
+    public String getSubTopic() {
+        return subTopic;
     }
 
-    public void setCountry(String country) {
-        this.country = country;
+    public void setSubTopic(String subTopic) {
+        this.subTopic = subTopic;
     }
 
     @Override
@@ -117,12 +161,12 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return id.equals(user.id) && firstName.equals(user.firstName) && lastName.equals(user.lastName) && Objects.equals(gender, user.gender) && Objects.equals(email, user.email) && Objects.equals(phone, user.phone) && Objects.equals(subscriptionsHave, user.subscriptionsHave) && Objects.equals(subscriptionsWant, user.subscriptionsWant) && Objects.equals(country, user.country);
+        return Objects.equals(id, user.id) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(gender, user.gender) && Objects.equals(age, user.age) && Objects.equals(city, user.city) && Objects.equals(state, user.state) && Objects.equals(occupation, user.occupation) && Objects.equals(email, user.email) && Objects.equals(phone, user.phone) && Objects.equals(verifiedCount, user.verifiedCount) && Objects.equals(topic, user.topic) && Objects.equals(subTopic, user.subTopic);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, lastName, gender, email, phone, subscriptionsHave, subscriptionsWant, country);
+        return Objects.hash(id, firstName, lastName, gender, age, city, state, occupation, email, phone, verifiedCount, topic, subTopic);
     }
 
     @Override
@@ -132,11 +176,15 @@ public class User {
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", gender='" + gender + '\'' +
+                ", age=" + age +
+                ", city='" + city + '\'' +
+                ", state='" + state + '\'' +
+                ", occupation='" + occupation + '\'' +
                 ", email='" + email + '\'' +
                 ", phone='" + phone + '\'' +
-                ", subscriptionsHave=" + subscriptionsHave +
-                ", subscriptionsWanted=" + subscriptionsWant +
-                ", country=" + country +
+                ", verifiedCount=" + verifiedCount +
+                ", topic='" + topic + '\'' +
+                ", subTopic='" + subTopic + '\'' +
                 '}';
     }
 }

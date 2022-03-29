@@ -16,6 +16,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.hateoas:spring-hateoas'
+	//implementation group: 'io.springfox', name: 'springfox-boot-starter', version: '3.0.0'
+	//implementation group: 'org.springframework.boot', name: 'spring-boot-starter-parent', version: '2.6.5', ext: 'pom'
 	runtimeOnly 'com.h2database:h2'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }

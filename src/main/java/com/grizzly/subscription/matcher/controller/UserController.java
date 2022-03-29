@@ -6,6 +6,8 @@ import com.grizzly.subscription.matcher.exceptions.UserNotFoundException;
 import com.grizzly.subscription.matcher.repository.UserRepository;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,6 +17,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
+@RequestMapping("/users")
 public class UserController {
 
     private final UserRepository userRepository;
@@ -25,7 +28,7 @@ public class UserController {
         this.userModelAssembler = userModelAssembler;
     }
 
-    @GetMapping("/users")
+    @GetMapping("/")
     public CollectionModel<EntityModel<User>> getAllUsers() {
         List<EntityModel<User>> users = userRepository.findAll().stream()
                 .map(userModelAssembler::toModel)
@@ -34,7 +37,7 @@ public class UserController {
                 linkTo(methodOn(UserController.class).getAllUsers()).withSelfRel());
     }
 
-    @GetMapping("/users/{id}")
+    @GetMapping("/{id}")
     public EntityModel<User> getUserById(@PathVariable Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
@@ -42,35 +45,59 @@ public class UserController {
 
     }
 
-    @PostMapping("/users")
-    public User addUser(@RequestBody User user) {
-        return userRepository.save(user);
+    @PostMapping("/")
+    public ResponseEntity<?> addUser(@RequestBody User user) {
+        EntityModel<User> entityModel =
+                userModelAssembler.toModel(userRepository.save(user));
+        return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF)
+                .toUri())
+                .body(entityModel);
     }
 
-    @PutMapping("/users/{id}")
-    public User replaceUser(@RequestBody User newUser, @PathVariable Long id) {
-        return userRepository.findById(id)
+    @PutMapping("/{id}")
+    public ResponseEntity<?> replaceUser(@RequestBody User newUser, @PathVariable Long id) {
+        User userObject = userRepository.findById(id)
                 .map(user -> {
                     user.setFirstName(newUser.getFirstName());
                     user.setLastName(newUser.getLastName());
                     user.setGender(newUser.getGender());
+                    user.setAge((newUser.getAge()));
+                    user.setCity((newUser.getCity()));
+                    user.setState((newUser.getState()));
+                    user.setOccupation((newUser.getOccupation()));
                     user.setEmail(newUser.getEmail());
                     user.setPhone(newUser.getPhone());
-                    user.setSubscriptionsHave(newUser.getSubscriptionsHave());
-                    user.setSubscriptionsWant(newUser.getSubscriptionsWant());
-                    user.setCountry(newUser.getCountry());
+                    user.setTopic(newUser.getTopic());
+                    user.setSubTopic((newUser.getSubTopic()));
                     return userRepository.save(user);
                 })
                 .orElseGet(() -> {
-                    newUser.setId(id);
-                    return userRepository.save(newUser);
-                    }
+                            newUser.setId(id);
+                            return userRepository.save(newUser);
+                        }
                 );
+        EntityModel<User> entityModel = userModelAssembler.toModel(userObject);
+
+        return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF)
+                        .toUri())
+                .body(entityModel);
     }
 
-    @DeleteMapping("/users/{id}")
-    public void deleteUser(@PathVariable Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         userRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}/verify")
+    public ResponseEntity<?> verifyUser(@PathVariable Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
+        Integer verifiedCount = user.getVerifiedCount() + 1;
+        user.setVerifiedCount(verifiedCount);
+        userRepository.save(user);
+        EntityModel<User> entityModel = userModelAssembler.toModel(user);
+        return ResponseEntity.ok(entityModel);
     }
 
 }
