@@ -28,13 +28,39 @@ public class UserController {
         this.userModelAssembler = userModelAssembler;
     }
 
-    @GetMapping("/")
-    public CollectionModel<EntityModel<User>> getAllUsers() {
-        List<EntityModel<User>> users = userRepository.findAll().stream()
-                .map(userModelAssembler::toModel)
-                .collect(Collectors.toList());
-        return CollectionModel.of(users,
-                linkTo(methodOn(UserController.class).getAllUsers()).withSelfRel());
+    @GetMapping()
+    public CollectionModel<EntityModel<User>> getUsers(
+            @RequestParam(value = "topic", required = false) String topic,
+            @RequestParam(value = "subTopic", required = false) String subTopic
+    ) {
+        if (null != topic && null != subTopic) {
+            List<EntityModel<User>> users = userRepository.findAll().stream()
+                    .filter(u -> u.getTopic().equals(topic) && u.getSubTopic().equals(subTopic))
+                    .map(userModelAssembler::toModel)
+                    .collect(Collectors.toList());
+            return CollectionModel.of(users,
+                    linkTo(methodOn(UserController.class).getUsers(topic, subTopic)).withSelfRel());
+        } else if (null != topic) {
+            List<EntityModel<User>> users = userRepository.findAll().stream()
+                    .filter(u -> u.getTopic().equals(topic))
+                    .map(userModelAssembler::toModel)
+                    .collect(Collectors.toList());
+            return CollectionModel.of(users,
+                    linkTo(methodOn(UserController.class).getUsers(topic, subTopic)).withSelfRel());
+        } else if (null != subTopic) {
+            List<EntityModel<User>> users = userRepository.findAll().stream()
+                    .filter(u -> u.getSubTopic().equals(subTopic))
+                    .map(userModelAssembler::toModel)
+                    .collect(Collectors.toList());
+            return CollectionModel.of(users,
+                    linkTo(methodOn(UserController.class).getUsers(topic, subTopic)).withSelfRel());
+        } else {
+            List<EntityModel<User>> users = userRepository.findAll().stream()
+                    .map(userModelAssembler::toModel)
+                    .collect(Collectors.toList());
+            return CollectionModel.of(users,
+                    linkTo(methodOn(UserController.class).getUsers(topic, subTopic)).withSelfRel());
+        }
     }
 
     @GetMapping("/{id}")
@@ -45,7 +71,7 @@ public class UserController {
 
     }
 
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<?> addUser(@RequestBody User user) {
         EntityModel<User> entityModel =
                 userModelAssembler.toModel(userRepository.save(user));
