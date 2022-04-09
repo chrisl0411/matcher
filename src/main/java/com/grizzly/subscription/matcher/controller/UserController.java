@@ -1,32 +1,19 @@
 package com.grizzly.subscription.matcher.controller;
 
-import com.grizzly.subscription.matcher.assembler.UserModelAssembler;
 import com.grizzly.subscription.matcher.domain.User;
-import com.grizzly.subscription.matcher.exceptions.UserNotFoundException;
-import com.grizzly.subscription.matcher.repository.UserRepository;
+import com.grizzly.subscription.matcher.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
-    private final UserRepository userRepository;
-    private final UserModelAssembler userModelAssembler;
-
-    public UserController(UserRepository userRepository, UserModelAssembler userModelAssembler) {
-        this.userRepository = userRepository;
-        this.userModelAssembler = userModelAssembler;
-    }
+    @Autowired
+    UserService userService;
 
     @GetMapping()
     public CollectionModel<EntityModel<User>> getUsers(
@@ -34,96 +21,39 @@ public class UserController {
             @RequestParam(value = "subTopic", required = false) String subTopic
     ) {
         if (null != topic && null != subTopic) {
-            List<EntityModel<User>> users = userRepository.findAll().stream()
-                    .filter(u -> u.getTopic().equals(topic) && u.getSubTopic().equals(subTopic))
-                    .map(userModelAssembler::toModel)
-                    .collect(Collectors.toList());
-            return CollectionModel.of(users,
-                    linkTo(methodOn(UserController.class).getUsers(topic, subTopic)).withSelfRel());
+            return userService.getUsersByTopicAndSubTopic(topic, subTopic);
         } else if (null != topic) {
-            List<EntityModel<User>> users = userRepository.findAll().stream()
-                    .filter(u -> u.getTopic().equals(topic))
-                    .map(userModelAssembler::toModel)
-                    .collect(Collectors.toList());
-            return CollectionModel.of(users,
-                    linkTo(methodOn(UserController.class).getUsers(topic, subTopic)).withSelfRel());
+            return userService.getUsersByTopic(topic);
         } else if (null != subTopic) {
-            List<EntityModel<User>> users = userRepository.findAll().stream()
-                    .filter(u -> u.getSubTopic().equals(subTopic))
-                    .map(userModelAssembler::toModel)
-                    .collect(Collectors.toList());
-            return CollectionModel.of(users,
-                    linkTo(methodOn(UserController.class).getUsers(topic, subTopic)).withSelfRel());
+            return userService.getUsersBySubTopic(subTopic);
         } else {
-            List<EntityModel<User>> users = userRepository.findAll().stream()
-                    .map(userModelAssembler::toModel)
-                    .collect(Collectors.toList());
-            return CollectionModel.of(users,
-                    linkTo(methodOn(UserController.class).getUsers(topic, subTopic)).withSelfRel());
+            return userService.getUsers();
         }
     }
 
     @GetMapping("/{id}")
     public EntityModel<User> getUserById(@PathVariable Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException(id));
-        return userModelAssembler.toModel(user);
-
+        return userService.getUserById(id);
     }
 
     @PostMapping("")
     public ResponseEntity<?> addUser(@RequestBody User user) {
-        EntityModel<User> entityModel =
-                userModelAssembler.toModel(userRepository.save(user));
-        return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF)
-                .toUri())
-                .body(entityModel);
+        return userService.addUser(user);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> replaceUser(@RequestBody User newUser, @PathVariable Long id) {
-        User userObject = userRepository.findById(id)
-                .map(user -> {
-                    user.setFirstName(newUser.getFirstName());
-                    user.setLastName(newUser.getLastName());
-                    user.setGender(newUser.getGender());
-                    user.setAge((newUser.getAge()));
-                    user.setCity((newUser.getCity()));
-                    user.setState((newUser.getState()));
-                    user.setOccupation((newUser.getOccupation()));
-                    user.setEmail(newUser.getEmail());
-                    user.setPhone(newUser.getPhone());
-                    user.setTopic(newUser.getTopic());
-                    user.setSubTopic((newUser.getSubTopic()));
-                    return userRepository.save(user);
-                })
-                .orElseGet(() -> {
-                            newUser.setId(id);
-                            return userRepository.save(newUser);
-                        }
-                );
-        EntityModel<User> entityModel = userModelAssembler.toModel(userObject);
-
-        return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF)
-                        .toUri())
-                .body(entityModel);
+        return userService.replaceUser(newUser, id);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
-        userRepository.deleteById(id);
-        return ResponseEntity.noContent().build();
+        return userService.deleteUser(id);
     }
 
     @PutMapping("/{id}/verify")
     public ResponseEntity<?> verifyUser(@PathVariable Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException(id));
-        Integer verifiedCount = user.getVerifiedCount() + 1;
-        user.setVerifiedCount(verifiedCount);
-        userRepository.save(user);
-        EntityModel<User> entityModel = userModelAssembler.toModel(user);
-        return ResponseEntity.ok(entityModel);
+        return userService.verifyUser(id);
     }
 
 }

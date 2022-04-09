@@ -21,6 +21,9 @@ public interface UserService {
 
     ResponseEntity<?> verifyUser(Long id);
 
+    CollectionModel<EntityModel<User>> getUsersByTopicAndSubTopic(String topic, String subTopic);
+
     CollectionModel<EntityModel<User>> getUsersByTopic(String topic);
 
+    CollectionModel<EntityModel<User>> getUsersBySubTopic(String subTopic);
 }
