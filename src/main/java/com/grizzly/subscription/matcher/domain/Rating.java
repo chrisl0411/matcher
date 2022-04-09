@@ -34,6 +34,19 @@ public class Rating {
     @Column(nullable = false)
     private LocalDateTime currentTimeStamp;
 
+    public Rating() {
+    }
+
+    public Rating(UUID ratingId, Long ratedUserId, Long ratingUserId, Long rating, String reviewDescription, Boolean anonymous, LocalDateTime currentTimeStamp) {
+        this.ratingId = ratingId;
+        this.ratedUserId = ratedUserId;
+        this.ratingUserId = ratingUserId;
+        this.rating = rating;
+        this.reviewDescription = reviewDescription;
+        this.anonymous = anonymous;
+        this.currentTimeStamp = currentTimeStamp;
+    }
+
     public void setRatingId(UUID ratingId) {
         this.ratingId = ratingId;
     }
