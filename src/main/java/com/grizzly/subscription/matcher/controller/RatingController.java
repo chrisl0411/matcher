@@ -1,13 +1,11 @@
 package com.grizzly.subscription.matcher.controller;
 
+import com.grizzly.subscription.matcher.assembler.RatingModelAssembler;
 import com.grizzly.subscription.matcher.domain.Rating;
+import com.grizzly.subscription.matcher.exceptions.RatingNotFoundException;
 import com.grizzly.subscription.matcher.repository.RatingRepository;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -15,18 +13,30 @@ import java.util.List;
 @RequestMapping("/rating")
 public class RatingController {
 
-    RatingRepository ratingRepository;
+    private final RatingRepository ratingRepository;
+    private final RatingModelAssembler ratingModelAssembler;
 
-    @PostMapping()
-    public Rating addRating(
-            @PathVariable Long ratingUserId,
-            @RequestBody Rating rating) {
-        return ratingRepository.save(rating);
+    public RatingController(RatingRepository ratingRepository, RatingModelAssembler ratingModelAssembler) {
+        this.ratingRepository = ratingRepository;
+        this.ratingModelAssembler = ratingModelAssembler;
     }
 
-    @GetMapping()
+    // TODO: 4/10/22 Add functionality to check if user giving rating exists. if user doesn't exist, throw UserNotFoundException
+    @PostMapping("")
+    public EntityModel<Rating> addRating(@RequestBody Rating rating) {
+        return ratingModelAssembler.toModel(ratingRepository.save(rating));
+    }
+
+    @GetMapping("")
     public List<Rating> getAllRatings() {
         return ratingRepository.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public EntityModel<Rating> getRatingById(@PathVariable Long id) {
+        Rating rating = ratingRepository.findById(id)
+                .orElseThrow(() -> new RatingNotFoundException(id));
+        return ratingModelAssembler.toModel(rating);
     }
 
 }

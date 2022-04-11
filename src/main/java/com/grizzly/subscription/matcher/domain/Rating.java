@@ -1,25 +1,16 @@
 package com.grizzly.subscription.matcher.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Objects;
-import java.util.UUID;
-
-import static java.util.UUID.randomUUID;
 
 @Entity
 @Table(name = "ratings")
 public class Rating {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private UUID ratingId = randomUUID();
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(nullable = false)
     private Long ratedUserId;
@@ -31,24 +22,31 @@ public class Rating {
     private String reviewDescription;
     @Column(nullable = false)
     private Boolean anonymous;
-    @Column(nullable = false)
-    private LocalDateTime currentTimeStamp;
+    @Column
+    private Date currentTimeStamp;
 
     public Rating() {
     }
 
-    public Rating(UUID ratingId, Long ratedUserId, Long ratingUserId, Long rating, String reviewDescription, Boolean anonymous, LocalDateTime currentTimeStamp) {
-        this.ratingId = ratingId;
+    public Rating(Long ratedUserId, Long ratingUserId, Long rating, String reviewDescription, Boolean anonymous) {
         this.ratedUserId = ratedUserId;
         this.ratingUserId = ratingUserId;
         this.rating = rating;
         this.reviewDescription = reviewDescription;
         this.anonymous = anonymous;
-        this.currentTimeStamp = currentTimeStamp;
     }
 
-    public void setRatingId(UUID ratingId) {
-        this.ratingId = ratingId;
+    @PrePersist
+    protected void onCreate() {
+        currentTimeStamp = new Date();
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Long getRatedUserId() {
@@ -91,11 +89,11 @@ public class Rating {
         this.anonymous = anonymous;
     }
 
-    public LocalDateTime getCurrentTimeStamp() {
+    public Date getCurrentTimeStamp() {
         return currentTimeStamp;
     }
 
-    public void setCurrentTimeStamp(LocalDateTime currentTimeStamp) {
+    public void setCurrentTimeStamp(Date currentTimeStamp) {
         this.currentTimeStamp = currentTimeStamp;
     }
 
@@ -104,18 +102,18 @@ public class Rating {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Rating rating1 = (Rating) o;
-        return Objects.equals(ratingId, rating1.ratingId) && Objects.equals(ratedUserId, rating1.ratedUserId) && Objects.equals(ratingUserId, rating1.ratingUserId) && Objects.equals(rating, rating1.rating) && Objects.equals(reviewDescription, rating1.reviewDescription) && Objects.equals(anonymous, rating1.anonymous) && Objects.equals(currentTimeStamp, rating1.currentTimeStamp);
+        return Objects.equals(id, rating1.id) && Objects.equals(ratedUserId, rating1.ratedUserId) && Objects.equals(ratingUserId, rating1.ratingUserId) && Objects.equals(rating, rating1.rating) && Objects.equals(reviewDescription, rating1.reviewDescription) && Objects.equals(anonymous, rating1.anonymous) && Objects.equals(currentTimeStamp, rating1.currentTimeStamp);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ratingId, ratedUserId, ratingUserId, rating, reviewDescription, anonymous, currentTimeStamp);
+        return Objects.hash(id, ratedUserId, ratingUserId, rating, reviewDescription, anonymous, currentTimeStamp);
     }
 
     @Override
     public String toString() {
         return "Rating{" +
-                "ratingId=" + ratingId +
+                "id=" + id +
                 ", ratedUserId=" + ratedUserId +
                 ", ratingUserId=" + ratingUserId +
                 ", rating=" + rating +
