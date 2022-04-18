@@ -6,7 +6,11 @@ import com.grizzly.subscription.matcher.controller.UserController;
 import com.grizzly.subscription.matcher.domain.User;
 import com.grizzly.subscription.matcher.repository.UserRepository;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -19,28 +23,39 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(UserController.class)
+@ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
 
-    @Autowired
-    MockMvc mockMvc;
+    @Mock
+    private UserRepository userRepository;
 
-    @MockBean
+    @Mock
+    private UserModelAssembler userModelAssembler;
+
+    @InjectMocks
     UserServiceImpl userService;
 
-    @MockBean
-    UserModelAssembler userModelAssembler;
+    @Test
+    void addVerifyToUser() {
+        User user = new User("firstName", "lastName", "male", 22, "Dallas", "TX", "Student", "test@email.com", "1234567890", 0, "Engineering", "Software Development");
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        userService.verifyUser(1L);
+        assertEquals(1, user.getVerifiedCount());
+    }
 
 //    @Test
 //    void getAllUsers() throws Exception {
