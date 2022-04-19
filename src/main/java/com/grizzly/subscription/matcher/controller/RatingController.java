@@ -5,6 +5,7 @@ import com.grizzly.subscription.matcher.domain.Rating;
 import com.grizzly.subscription.matcher.exceptions.RatingNotFoundException;
 import com.grizzly.subscription.matcher.repository.RatingRepository;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,8 +41,9 @@ public class RatingController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteRatingById(@PathVariable Long id) {
+    public ResponseEntity<?> deleteRatingById(@PathVariable Long id) {
         ratingRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 
 
