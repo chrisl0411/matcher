@@ -39,4 +39,11 @@ public class RatingController {
         return ratingModelAssembler.toModel(rating);
     }
 
+    @DeleteMapping("/{id}")
+    public void deleteRatingById(@PathVariable Long id) {
+        ratingRepository.deleteById(id);
+    }
+
+
+
 }
