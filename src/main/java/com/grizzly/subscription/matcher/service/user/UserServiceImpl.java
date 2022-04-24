@@ -1,4 +1,4 @@
-package com.grizzly.subscription.matcher.service;
+package com.grizzly.subscription.matcher.service.user;
 
 import com.grizzly.subscription.matcher.assembler.UserModelAssembler;
 import com.grizzly.subscription.matcher.domain.User;

@@ -1,7 +1,7 @@
 package com.grizzly.subscription.matcher.controller;
 
 import com.grizzly.subscription.matcher.domain.User;
-import com.grizzly.subscription.matcher.service.UserService;
+import com.grizzly.subscription.matcher.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -23,7 +23,7 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @GetMapping()
+    @GetMapping("")
     public CollectionModel<EntityModel<User>> getUsers(
             @RequestParam(value = "topic", required = false) String topic,
             @RequestParam(value = "subTopic", required = false) String subTopic
@@ -42,6 +42,13 @@ public class UserController {
     @GetMapping("/{id}")
     public EntityModel<User> getUserById(@PathVariable Long id) {
         return userService.getUserById(id);
+    }
+
+    @GetMapping("/{id}/rating")
+    public Long getRatingForUserId(@PathVariable Long id) {
+        //get average of ratings for userId = {id}.
+        //call the rating API to get rating for userId
+        return 0L;
     }
 
     @PostMapping("")
