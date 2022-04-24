@@ -44,10 +44,14 @@ public class User {
     private String topic;
     @Column(nullable = false)
     private String subTopic;
+    @Column()
+    private Long rating;
+    @Column()
+    private String aboutMe;
 
     User() {}
 
-    public User(String firstName, String lastName, String gender, Integer age, String city, String state, String occupation, String email, String phone, Integer verifiedCount, String topic, String subTopic) {
+    public User(String firstName, String lastName, String gender, Integer age, String city, String state, String occupation, String email, String phone, Integer verifiedCount, String topic, String subTopic, Long rating, String aboutMe) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.gender = gender;
@@ -60,6 +64,8 @@ public class User {
         this.verifiedCount = verifiedCount;
         this.topic = topic;
         this.subTopic = subTopic;
+        this.rating = rating;
+        this.aboutMe = aboutMe;
     }
 
     public Long getId() {
@@ -166,17 +172,33 @@ public class User {
         this.subTopic = subTopic;
     }
 
+    public Long getRating() {
+        return rating;
+    }
+
+    public void setRating(Long rating) {
+        this.rating = rating;
+    }
+
+    public String getAboutMe() {
+        return aboutMe;
+    }
+
+    public void setAboutMe(String aboutMe) {
+        this.aboutMe = aboutMe;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(gender, user.gender) && Objects.equals(age, user.age) && Objects.equals(city, user.city) && Objects.equals(state, user.state) && Objects.equals(occupation, user.occupation) && Objects.equals(email, user.email) && Objects.equals(phone, user.phone) && Objects.equals(verifiedCount, user.verifiedCount) && Objects.equals(topic, user.topic) && Objects.equals(subTopic, user.subTopic);
+        return Objects.equals(id, user.id) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(gender, user.gender) && Objects.equals(age, user.age) && Objects.equals(city, user.city) && Objects.equals(state, user.state) && Objects.equals(occupation, user.occupation) && Objects.equals(email, user.email) && Objects.equals(phone, user.phone) && Objects.equals(verifiedCount, user.verifiedCount) && Objects.equals(topic, user.topic) && Objects.equals(subTopic, user.subTopic) && Objects.equals(rating, user.rating) && Objects.equals(aboutMe, user.aboutMe);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, lastName, gender, age, city, state, occupation, email, phone, verifiedCount, topic, subTopic);
+        return Objects.hash(id, firstName, lastName, gender, age, city, state, occupation, email, phone, verifiedCount, topic, subTopic, rating, aboutMe);
     }
 
     @Override
@@ -195,6 +217,8 @@ public class User {
                 ", verifiedCount=" + verifiedCount +
                 ", topic='" + topic + '\'' +
                 ", subTopic='" + subTopic + '\'' +
+                ", rating=" + rating +
+                ", aboutMe='" + aboutMe + '\'' +
                 '}';
     }
 }
